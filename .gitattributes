@@ -1,1 +1,2 @@
 images_dataset.zip filter=lfs diff=lfs merge=lfs -text
+images_dataset_part*.zip filter=lfs diff=lfs merge=lfs -text
