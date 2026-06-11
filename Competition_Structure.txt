@@ -1,0 +1,208 @@
+Overview
+Chest X-ray imaging is one of the most widely used diagnostic tools for identifying thoracic diseases. Radiologists analyze these images to detect abnormalities such as lung infections, fluid accumulation, lung collapse, and heart enlargement. However, interpreting chest radiographs requires expertise and can be time-consuming, especially when dealing with large volumes of medical images.
+
+
+
+
+-------------
+DATASET_INFO
+The dataset contains first column as image id and rest of the columns as 20 pathology classes (e.g., Atelectasis, Cardiomegaly, Consolidation, Edema, Pleural Effusion, etc.).
+
+• Training Set: 51,043 images with ground truth labels.
+
+• Test Set: 17,015 images (labels hidden).
+
+• Labels: One-hot encoded binary indicators (0/1) for the 20 classes.
+
+• Format:
+
+– Images stored in folder structure (images/). – train.csv: Contains columns image id corresponding to images in the images/ folder and 20 binary label columns representing 20 classes.
+
+Your task is to train the model and predict the class for images in test.csv
+
+Files
+train.csv - the training set
+test.csv - the test set
+sample_submission.csv - a sample submission file in the correct format
+Columns in train.csv
+id - image id corresponding to images in the images/folder
+Atelectasis - one of the 20 classes with value either 1 or 0
+Cardiomegaly - one of the 20 classes with value either 1 or 0
+Similarly rest of the columns are denoting classes. Each row will have first column named id and rest of the 20 columns being the classes. In each row only one class will have value 1 and rest of the classes will have values as 0.
+
+Background
+Chest radiography is one of the most commonly used imaging techniques in healthcare for diagnosing diseases affecting the lungs, heart, and surrounding thoracic structures. Physicians rely on chest X-rays to identify a wide variety of abnormalities such as lung consolidation, pleural effusion, pulmonary edema, and cardiomegaly.
+
+Despite its importance, manual interpretation of chest X-rays can be challenging due to:
+
+Large volumes of imaging data
+
+Subtle visual patterns
+
+Inter-observer variability among radiologists
+
+Machine learning models, particularly deep learning systems, have shown strong potential in assisting clinicians by automatically detecting abnormalities in medical images.
+
+This competition focuses on building models that can detect multiple thoracic pathologies from chest X-ray images.
+
+Problem Setup
+Participants are required to develop models that classify each chest X-ray image into one of 20 thoracic pathology classes, including a No Finding category.
+
+Each image is associated with binary labels for each pathology, indicating whether a disease is present or absent.
+
+The task therefore requires models that can effectively learn visual patterns associated with different diseases while remaining robust to challenges such as rare classes and noisy signals.
+
+Key Challenges
+1. Class Imbalance
+
+Medical datasets often contain highly imbalanced class distributions. Some pathologies appear frequently in the dataset, while others are rare.
+
+For example:
+
+Common findings may appear thousands of times.
+
+Rare diseases may appear only a few hundred times.
+
+This imbalance can cause machine learning models to favor majority classes and ignore rare but clinically important diseases.
+
+Participants are encouraged to implement strategies to address class imbalance, such as:
+
+Data augmentation
+
+Class weighting
+
+Sampling strategies
+
+Loss function modifications
+
+2. Asymmetric Error Costs
+
+In medical diagnosis, different prediction errors have different consequences.
+
+Missing a disease diagnosis (False Negative) may delay treatment and potentially endanger patients.
+
+Predicting a disease when it is not present (False Positive) may lead to unnecessary follow-up tests but is usually less harmful.
+
+To reflect this clinical reality, the competition uses an asymmetric cost structure where False Negatives are penalized much more heavily than False Positives.
+
+Objective
+Participants must build models that maximize the competition score, which rewards correct disease detection while heavily penalizing missed diagnoses.
+
+Successful solutions should demonstrate:
+
+Strong performance across all pathology classes
+
+Effective handling of class imbalance
+
+Careful control of false negatives
+
+Evaluation
+Submissions are evaluated using a macro-averaged asymmetric cost function designed to reflect the clinical impact of prediction errors.
+
+In medical applications, missing a disease diagnosis is far more critical than producing a false alarm, and therefore the scoring function penalizes False Negatives much more heavily.
+
+Error Cost Structure
+
+Each prediction receives a score depending on the type of prediction outcome.
+
+Prediction Outcome	Description	Score
+True Positive (TP)	Correctly predicting a disease	+1
+False Positive (FP)	Predicting a disease when it is absent	-1
+False Negative (FN)	Failing to detect a disease	-5
+Special Cases
+
+Predicting No Finding when no disease exists → +1
+
+Predicting No Finding when a disease is present → −5
+
+Predicting a disease when it should be No Finding → −1
+
+Confusing Disease A with Disease B
+
+This results in:
+
+False Negative for Disease A
+
+False Positive for Disease B
+
+Why Macro-Averaging?
+
+Macro-averaging ensures that each pathology contributes equally to the final score, regardless of how frequently it appears in the dataset.
+
+This prevents models from achieving high scores simply by predicting the majority class (No Finding) and encourages participants to design models that perform well across both common and rare diseases.
+
+Class-Level Score
+
+For each pathology class c, the score is computed as:
+
+Score_c = (TP_c - FP_c - 5 * FN_c) / N_c
+
+
+Final Competition Score
+
+The final competition score is the macro-average across all classes:
+
+Final Score = (1 / C) * sum from c=1 to C of Score_c
+
+
+
+
+
+
+You should follow the general workflow below when participating in the competition.
+Step 1: Understand the Problem
+Carefully read the problem statement
+Understand the dataset structure
+Identify the target variable (class labels)
+Step 2: Explore the Dataset
+You should perform Exploratory Data Analysis (EDA) such as:
+Checking class distribution
+Visualizing sample images
+Identifying class imbalance
+Understanding image resolution and format
+This step helps in designing better training strategies.
+Step 3: Data Preprocessing
+Typical preprocessing steps may include:
+Image resizing
+Normalization
+Data augmentation
+Handling class imbalance
+Train-validation split
+Proper preprocessing often significantly improves model performance.
+Step 4: Model Development
+You may experiment with different approaches, including:
+Transfer learning using pretrained models
+Fine-tuning pretrained architectures.
+Custom deep learning models.
+Use of various loss functions according to the requirements of the problem.
+Incremental training of models with change of attribute’s properties such as (size of image etc)
+Combining multiple loss functions 
+Common pretrained models include:
+ResNet
+EfficientNet
+DenseNet
+Vision Transformers
+Ensemble Models can also be tried
+Step 5: Model Training
+During training, You should monitor:
+Training loss
+Validation loss
+Accuracy
+Overfitting behavior
+You may experiment with:
+Different optimizers
+Learning rate schedules
+Loss functions
+Regularization techniques
+Step 6: Generate Predictions
+Once the model is trained:
+Run inference on the test dataset
+Generate predictions for each test sample
+Format the predictions according to sample_submission.csv
+11. Best Practices for Kaggle Competitions
+You are encouraged to follow these practices:
+Maintain clean and reproducible code
+Document experiments and results
+Save trained model checkpoints
+Keep all model code commented other than the one which you want to run at the current time
+Understand the complete machine learning pipeline
